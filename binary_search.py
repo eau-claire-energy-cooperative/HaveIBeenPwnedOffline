@@ -3,7 +3,7 @@
 from __future__ import division, print_function, unicode_literals
 from hashlib import sha1
 from os import stat
-from argparse import ArgumentParser
+import argparse
 
 
 def binary_search(hex_hash, list_file, file_size):
@@ -34,17 +34,20 @@ def binary_search(hex_hash, list_file, file_size):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description='Test passwords locally.' +
-                                        ' Each password you pass as an argument will be hashed and this script' +
+    parser = argparse.ArgumentParser(description='Test passwords locally.' +
+                                        ' Each password in the file will be hashed and this script' +
                                         ' will search for the hash in the list.')
-    parser.add_argument('passwords', nargs='+')
+    parser.add_argument('passwords', type=argparse.FileType('r'))
     parser.add_argument('--pwned-passwords-ordered-by-hash-filename', required=False,
                         default="pwned-passwords-sha1-ordered-by-hash-v4.txt")
     args = parser.parse_args()
+
     with open(args.pwned_passwords_ordered_by_hash_filename, 'r') as pwned_passwords_file:
         pwned_passwords_file_size = stat(args.pwned_passwords_ordered_by_hash_filename).st_size
         # print("File size: {} Bytes".format(pwned_passwords_file_size))
-        for password in args.passwords:
+
+        for password in args.passwords.readlines():
+            password = password.rstrip()
             if 'decode' in dir(str):
                 password = password.decode('utf-8')
             encodings = ['utf-8', 'latin', 'iso8859-15', 'iso8859-1']

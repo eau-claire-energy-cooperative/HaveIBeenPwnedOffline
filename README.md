@@ -14,11 +14,10 @@ Currently it should be named
 name you do not need to supply a filename for the script to
 search in.
 
-After that run the python script. It accepts a list of passwords
-as params. On Ubuntu it would look like this:
+After that run the python script. It accepts a filename that has each password to be tested on a new line. On Ubuntu it would look like this:
 
 ```shell
-python binary_search.py "paSsword" "anotherSecurePassw0rd"
+python binary_search.py passwordList.txt
 ```
 
 If the password contains characters which could be encoded 
