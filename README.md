@@ -14,11 +14,9 @@ Currently it should be named
 name you do not need to supply a filename for the script to
 search in.
 
-After that run the python script. It accepts a filename that has each password to be tested on a new line. On Ubuntu it would look like this:
+After that run the python script. It accepts a filename that has each hash to be tested on a new line. On Ubuntu it would look like this:
 
 ```shell
-python binary_search.py passwordList.txt
+python binary_search.py hashList.txt
 ```
 
-If the password contains characters which could be encoded 
-differently with different encodings 
