@@ -40,6 +40,7 @@ if __name__ == "__main__":
     parser.add_argument('passwords', type=argparse.FileType('r'))
     parser.add_argument('--pwned-passwords-ordered-by-hash-filename', required=False,
                         default="pwned-passwords-sha1-ordered-by-hash-v4.txt")
+    parser.add_argument('--skip-not-found',action='store_true',required=False,help="skip log messages for passwords that are not found")
     parser.add_argument('--log',type=str,required=False,default="INFO")
     args = parser.parse_args()
 
@@ -48,7 +49,6 @@ if __name__ == "__main__":
     numeric_level = getattr(logging, args.log.upper())
     logging.basicConfig(level=numeric_level)
     logger = logging.getLogger("pwned_offline")
-
 
     with open(args.pwned_passwords_ordered_by_hash_filename, 'r') as pwned_passwords_file:
         pwned_passwords_file_size = stat(args.pwned_passwords_ordered_by_hash_filename).st_size
@@ -74,5 +74,5 @@ if __name__ == "__main__":
             if count > 0:
                 logger.info("Your password \"{}\" was in {} leaks or hacked databases!".format(password, count) +
                       " Please change it immediately.")
-            else:
+            elif(not args.skip_not_found):
                 logger.info("Your password \"{}\" is not in the dataset. You may relax.".format(password))
