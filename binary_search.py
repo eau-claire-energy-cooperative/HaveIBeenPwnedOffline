@@ -69,7 +69,7 @@ if __name__ == "__main__":
                     continue
             count = 0
             for h in hashes:
-                logger.info("Searching for hash {} of password \"{}\".".format(h, password))
+                logger.debug("Searching for hash {} of password \"{}\".".format(h, password))
                 count += binary_search(h, pwned_passwords_file, pwned_passwords_file_size)
             if count > 0:
                 logger.info("Your password \"{}\" was in {} leaks or hacked databases!".format(password, count) +
