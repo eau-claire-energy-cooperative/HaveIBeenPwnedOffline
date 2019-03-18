@@ -35,8 +35,8 @@ def binary_search(hex_hash, list_file, file_size):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test passwords locally.' +
-                                        ' Each password in the file will be hashed and this script' +
-                                        ' will search for the hash in the list.')
+                                        ' Each password hash in the file will be' +
+                                        ' searched for in the list.')
     parser.add_argument('passwords', type=argparse.FileType('r'))
     parser.add_argument('--pwned-passwords-ordered-by-hash-filename', required=False,
                         default="pwned-passwords-sha1-ordered-by-hash-v4.txt")
@@ -54,25 +54,18 @@ if __name__ == "__main__":
         pwned_passwords_file_size = stat(args.pwned_passwords_ordered_by_hash_filename).st_size
         logger.debug("File size: {} Bytes".format(pwned_passwords_file_size))
 
+        lineNum = 1
         for password in args.passwords.readlines():
-            password = password.rstrip()
-            if 'decode' in dir(str):
-                password = password.decode('utf-8')
-            encodings = ['utf-8', 'latin', 'iso8859-15', 'iso8859-1']
-            hashes = []
-            for encoding in encodings:
-                try:
-                    hash_candidate = sha1(password.encode(encoding)).hexdigest().upper()
-                    if hash_candidate not in hashes:
-                        hashes.append(hash_candidate)
-                except UnicodeEncodeError:
-                    continue
-            count = 0
-            for h in hashes:
-                logger.debug("Searching for hash {} of password \"{}\".".format(h, password))
-                count += binary_search(h, pwned_passwords_file, pwned_passwords_file_size)
-            if count > 0:
-                logger.info("Your password \"{}\" was in {} leaks or hacked databases!".format(password, count) +
-                      " Please change it immediately.")
-            elif(not args.skip_not_found):
-                logger.info("Your password \"{}\" is not in the dataset. You may relax.".format(password))
+            hash = password.rstrip()
+
+            if(hash != ""):
+                count = 0
+                logger.debug("Searching for hash {} at line {}".format(hash,lineNum))
+                count += binary_search(hash, pwned_passwords_file, pwned_passwords_file_size)
+
+                if count > 0:
+                    logger.info("Your password \"{}\" at line {} was in {} leaks or hacked databases!".format(hash, lineNum,count) +
+                          " Please change it immediately.")
+                elif(not args.skip_not_found):
+                    logger.info("Your password \"{}\" at line {} is not in the dataset. You may relax.".format(hash,lineNum))
+            lineNum += 1
