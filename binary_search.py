@@ -44,10 +44,9 @@ if __name__ == "__main__":
     parser.add_argument('--log',type=str,required=False,default="INFO")
     args = parser.parse_args()
 
-
     #configure logger
     numeric_level = getattr(logging, args.log.upper())
-    logging.basicConfig(level=numeric_level)
+    logging.basicConfig(level=numeric_level,format='%(message)s')
     logger = logging.getLogger("pwned_offline")
 
     with open(args.pwned_passwords_ordered_by_hash_filename, 'r') as pwned_passwords_file:
